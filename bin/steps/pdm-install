@@ -18,7 +18,7 @@ if [ ! "$SKIP_PDM_INSTALL" ]; then
         exit 1
     fi
     
-    /app/.heroku/python/bin/pdm config python.use_venv ${PDM_USE_VENV:-"false"}
+    /app/.heroku/python/bin/pdm config python.use_venv ${PDM_USE_VENV:-"true"}
 
     /app/.heroku/python/bin/pdm install --verbose --prod 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
     PDM_STATUS="${PIPESTATUS[0]}"
