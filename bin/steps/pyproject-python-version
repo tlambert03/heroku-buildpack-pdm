@@ -10,14 +10,18 @@ if [[ ! -f $BUILD_DIR/runtime.txt ]]; then
         # shellcheck disable=2034
         PYTHON_VERSION_SOURCE='pyproject.toml'
         set +e
+        echo "Checking pyproject.toml for python version"
         PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); print $2 }' "$BUILD_DIR/pyproject.toml")
+        echo "Parsed python version: $PYTHON"
         if [[ "$PYTHON" != "" ]]; then
             echo "python-$PYTHON" > "$BUILD_DIR/runtime.txt"
         fi
         set -e
 
         if [[ "$PYTHON" == "" ]]; then
+            echo "Checking again..."
             PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); split($2, parts, /\./); print parts[1]"."parts[2] }' "$BUILD_DIR/pyproject.toml")
+            echo "Parsed python version: $PYTHON"
             case "${PYTHON}" in
                 3.7)
                     echo "${LATEST_37}" > "${BUILD_DIR}/runtime.txt"
