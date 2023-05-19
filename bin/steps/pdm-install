@@ -14,10 +14,11 @@ if [ ! "$SKIP_PDM_INSTALL" ]; then
     mcount "tool.pdm"
 
     if [ ! -f "$BUILD_DIR/.heroku/python/bin/pdm" ]; then
+        puts-step "ERROR: PDM not found!"
         exit 1
     fi
 
-    /app/.heroku/python/bin/pdm install --prod 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    /app/.heroku/python/bin/pdm install --verbose --prod 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
     PDM_STATUS="${PIPESTATUS[0]}"
     set -e
 
