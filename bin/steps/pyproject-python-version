@@ -2,43 +2,41 @@
 
 # Detect Python-version with pyproject.
 
-if [[ -f $BUILD_DIR/pyproject.toml ]]; then
 
-    if [[ ! -f $BUILD_DIR/runtime.txt ]]; then
+if [[ ! -f $BUILD_DIR/runtime.txt ]]; then
 
-        if [[ -f $BUILD_DIR/Pipfile.lock ]]; then
-            # Ignore unused env var warning since this is used by bin/compile.
-            # shellcheck disable=2034
-            PYTHON_VERSION_SOURCE='Pipfile.lock'
-            set +e
-            PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); print $2 }' "$BUILD_DIR/pyproject.toml")
-            if [[ "$PYTHON" != "" ]]; then
-                echo "python-$PYTHON" > "$BUILD_DIR/runtime.txt"
-            fi
-            set -e
-
-            if [[ "$PYTHON" == "" ]]; then
-                PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); split($2, parts, /\./); print parts[1]"."parts[2] }' "$BUILD_DIR/pyproject.toml")
-                case "${PYTHON}" in
-                    3.7)
-                        echo "${LATEST_37}" > "${BUILD_DIR}/runtime.txt"
-                        ;;
-                    3.8)
-                        echo "${LATEST_38}" > "${BUILD_DIR}/runtime.txt"
-                        ;;
-                    3.9)
-                        echo "${LATEST_39}" > "${BUILD_DIR}/runtime.txt"
-                        ;;
-                    3.10)
-                        echo "${LATEST_310}" > "${BUILD_DIR}/runtime.txt"
-                        ;;
-                    3.11)
-                        echo "${LATEST_311}" > "${BUILD_DIR}/runtime.txt"
-                        ;;
-                esac
-            fi
-
-
+    if [[ -f $BUILD_DIR/pyproject.toml ]]; then
+        # Ignore unused env var warning since this is used by bin/compile.
+        # shellcheck disable=2034
+        PYTHON_VERSION_SOURCE='pyproject.toml'
+        set +e
+        PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); print $2 }' "$BUILD_DIR/pyproject.toml")
+        if [[ "$PYTHON" != "" ]]; then
+            echo "python-$PYTHON" > "$BUILD_DIR/runtime.txt"
         fi
+        set -e
+
+        if [[ "$PYTHON" == "" ]]; then
+            PYTHON=$(awk -F ' = ' '/requires-python/ { gsub(/"/, "", $2); sub(/^[=<>]*/, "", $2); split($2, parts, /\./); print parts[1]"."parts[2] }' "$BUILD_DIR/pyproject.toml")
+            case "${PYTHON}" in
+                3.7)
+                    echo "${LATEST_37}" > "${BUILD_DIR}/runtime.txt"
+                    ;;
+                3.8)
+                    echo "${LATEST_38}" > "${BUILD_DIR}/runtime.txt"
+                    ;;
+                3.9)
+                    echo "${LATEST_39}" > "${BUILD_DIR}/runtime.txt"
+                    ;;
+                3.10)
+                    echo "${LATEST_310}" > "${BUILD_DIR}/runtime.txt"
+                    ;;
+                3.11)
+                    echo "${LATEST_311}" > "${BUILD_DIR}/runtime.txt"
+                    ;;
+            esac
+        fi
+
+
     fi
 fi
