@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# shellcheck source=bin/utils
+source "$BIN_DIR/utils"
+
+if [ ! "$SKIP_PDM_INSTALL" ]; then
+
+    # Install dependencies with pdm.
+    puts-step "Installing requirements with pdm"
+
+    set +e
+
+    # Measure that we're using pip.
+    mcount "tool.pdm"
+
+    if [ ! -f "$BUILD_DIR/.heroku/python/bin/pdm" ]; then
+        exit 1
+    fi
+
+    /app/.heroku/python/bin/pdm install --prod 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    PDM_STATUS="${PIPESTATUS[0]}"
+    set -e
+
+    show-warnings
+
+    if [[ ! $PDM_STATUS -eq 0 ]]; then
+        mcount "failure.pdm-install"
+        exit 1
+    fi
+
+fi

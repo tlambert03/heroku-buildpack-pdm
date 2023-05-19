@@ -38,7 +38,7 @@ remote:        Procfile declares types -> (none)
 remote:
 ```
 
-A `requirements.txt` must be present at the root of your application's repository to deploy.
+A `pyproject.toml` must be present at the root of your application's repository to deploy.
 
 To specify your python version, you also need a `runtime.txt` file - unless you are using the default Python runtime version.
 
