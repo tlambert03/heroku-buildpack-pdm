@@ -3,9 +3,7 @@
 # shellcheck source=bin/utils
 source "$BIN_DIR/utils"
 
-if [ ! "$SKIP_PDM_GLOBAL" ]; then
-    eval "$(pdm --pep582)"
-fi 
+
 
 if [ ! "$SKIP_PDM_INSTALL" ]; then
 
@@ -21,10 +19,13 @@ if [ ! "$SKIP_PDM_INSTALL" ]; then
         puts-step "ERROR: PDM not found!"
         exit 1
     fi
-    
-    /app/.heroku/python/bin/pdm config python.use_venv ${PDM_USE_VENV:-"true"}
 
-    /app/.heroku/python/bin/pdm install --verbose --prod --global --project . 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    if [ ! "$SKIP_PDM_GLOBAL" ]; then
+        eval "$(pdm --pep582)"
+    fi 
+    /app/.heroku/python/bin/pdm use /app/.heroku/python/bin/python
+
+    /app/.heroku/python/bin/pdm install --verbose --prod --global --fail-fast --project $BUILD_DIR 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
     PDM_STATUS="${PIPESTATUS[0]}"
     set -e
 
