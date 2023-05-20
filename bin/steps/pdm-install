@@ -3,6 +3,10 @@
 # shellcheck source=bin/utils
 source "$BIN_DIR/utils"
 
+if [ ! "$SKIP_PDM_GLOBAL" ]; then
+    eval "$(pdm --pep582)"
+fi 
+
 if [ ! "$SKIP_PDM_INSTALL" ]; then
 
     # Install dependencies with pdm.
@@ -20,7 +24,7 @@ if [ ! "$SKIP_PDM_INSTALL" ]; then
     
     /app/.heroku/python/bin/pdm config python.use_venv ${PDM_USE_VENV:-"true"}
 
-    /app/.heroku/python/bin/pdm install --verbose --prod 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
+    /app/.heroku/python/bin/pdm install --verbose --prod --global --project . 2>&1 | tee "$WARNINGS_LOG" | cleanup | indent
     PDM_STATUS="${PIPESTATUS[0]}"
     set -e
 
